@@ -1,8 +1,6 @@
 package ru.geekbrains.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler {
@@ -30,7 +28,7 @@ public class ClientHandler {
                                 if (nickFromDB != null) {
                                     if (!server.isNickInChat(nickFromDB)) {
                                         nickname = nickFromDB;
-                                        sendMsg("/authok " + nickname);
+                                        sendMsg("/authok " + nickname + " " + subStrings[1]);
                                         server.subscribe(this);
                                         break;
                                     } else {
