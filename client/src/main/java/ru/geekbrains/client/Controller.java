@@ -18,10 +18,12 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 
 public class Controller implements Initializable {
 
@@ -50,6 +52,7 @@ public class Controller implements Initializable {
     private DataInputStream in;
     private DataOutputStream out;
     private String nickname;
+    private String login;
     private ObservableList<String> clients;
     private boolean authorized;
 
@@ -149,7 +152,15 @@ public class Controller implements Initializable {
                             // /authok nick
                             if (str.startsWith("/authok")) {
                                 nickname = str.split(" ")[1];
+                                this.login =  str.split(" ")[2];
                                 setAuthorized(true);
+                                String fileName = System.getProperty("user.dir") + "/History/history_" + login + ".txt";
+                                File file = new File(fileName);
+                                file.createNewFile();
+                                for (String msg : History.readHistory(fileName)){
+                                    textArea.appendText(msg + System.lineSeparator());
+                                }
+
                                 break;
                             }
                         }
@@ -157,6 +168,7 @@ public class Controller implements Initializable {
                             String str = in.readUTF();
                             if (!str.startsWith("/")) {
                                 textArea.appendText(str + System.lineSeparator());
+                                History.writeHistory(System.getProperty("user.dir") + "/History/history_" + login + ".txt", str + System.lineSeparator());
                             } else if (str.startsWith("/clientslist")) {
                                 // /clientslist nick1 nick2 nick3
                                 String[] subStr = str.split(" ");
